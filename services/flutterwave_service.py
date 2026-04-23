@@ -2,7 +2,7 @@ from datetime import date
 
 import httpx
 
-from app.core.config import settings
+from core.config import settings
 
 
 async def initialize_flutterwave_payment(

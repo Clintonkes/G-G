@@ -4,14 +4,14 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.session import get_db
-from app.models.notification import NotificationType
-from app.models.payment import Payment, PaymentStatus
-from app.models.property import Property
-from app.models.user import User
-from app.services.dependencies import verify_cron_secret
-from app.services.email_service import send_email
-from app.services.notification_service import create_notification
+from db.session import get_db
+from models.notification import NotificationType
+from models.payment import Payment, PaymentStatus
+from models.property import Property
+from models.user import User
+from services.dependencies import verify_cron_secret
+from services.email_service import send_email
+from services.notification_service import create_notification
 
 
 router = APIRouter()

@@ -4,18 +4,18 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.config import settings
-from app.db.session import get_db
-from app.models.notification import NotificationType
-from app.models.payment import Payment, PaymentStatus
-from app.models.property import Property, PropertyStatus
-from app.models.user import User
-from app.schemas.payment import PaymentInitializeRequest, PaymentLinkResponse, PaymentResponse, PaymentVerifyRequest
-from app.services.dependencies import get_current_user
-from app.services.email_service import send_email
-from app.services.flutterwave_service import initialize_flutterwave_payment, verify_flutterwave_payment
-from app.services.helpers import calculate_platform_fee, generate_id
-from app.services.notification_service import create_notification
+from core.config import settings
+from db.session import get_db
+from models.notification import NotificationType
+from models.payment import Payment, PaymentStatus
+from models.property import Property, PropertyStatus
+from models.user import User
+from schemas.payment import PaymentInitializeRequest, PaymentLinkResponse, PaymentResponse, PaymentVerifyRequest
+from services.dependencies import get_current_user
+from services.email_service import send_email
+from services.flutterwave_service import initialize_flutterwave_payment, verify_flutterwave_payment
+from services.helpers import calculate_platform_fee, generate_id
+from services.notification_service import create_notification
 
 
 router = APIRouter()

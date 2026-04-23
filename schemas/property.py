@@ -2,8 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, field_validator
 
-from app.models.property import ListingType, PropertyStatus, PropertyType
-from app.schemas.common import ORMModel
+from models.property import ListingType, PropertyStatus, PropertyType
+from schemas.common import ORMModel
 
 
 class PropertyBase(BaseModel):

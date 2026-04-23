@@ -1,10 +1,10 @@
-from app.models.appointment import Appointment
-from app.models.notification import Notification
-from app.models.payment import Payment
-from app.models.property import Property
-from app.models.saved_property import SavedProperty
-from app.models.subscription import Subscription
-from app.models.user import User
+from models.appointment import Appointment
+from models.notification import Notification
+from models.payment import Payment
+from models.property import Property
+from models.saved_property import SavedProperty
+from models.subscription import Subscription
+from models.user import User
 
 __all__ = [
     "Appointment",

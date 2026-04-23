@@ -1,11 +1,11 @@
 from sqlalchemy import select
 
-from app.core.config import settings
-from app.core.security import get_password_hash
-from app.db.session import SessionLocal
-from app.models.subscription import Subscription, SubscriptionPlan
-from app.models.user import User, UserRole
-from app.services.helpers import generate_id
+from core.config import settings
+from core.security import get_password_hash
+from db.session import SessionLocal
+from models.subscription import Subscription, SubscriptionPlan
+from models.user import User, UserRole
+from services.helpers import generate_id
 
 
 def main() -> None:

@@ -2,8 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.models.notification import NotificationType
-from app.schemas.common import ORMModel
+from models.notification import NotificationType
+from schemas.common import ORMModel
 
 
 class NotificationResponse(ORMModel):

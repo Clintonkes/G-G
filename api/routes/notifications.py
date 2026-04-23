@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.session import get_db
-from app.models.notification import Notification
-from app.models.user import User
-from app.schemas.notification import NotificationResponse, NotificationUpdateRequest
-from app.services.dependencies import get_current_user
+from db.session import get_db
+from models.notification import Notification
+from models.user import User
+from schemas.notification import NotificationResponse, NotificationUpdateRequest
+from services.dependencies import get_current_user
 
 
 router = APIRouter()

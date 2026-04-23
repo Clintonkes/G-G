@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 
-from app.models.user import UserRole
-from app.schemas.common import ORMModel
+from models.user import UserRole
+from schemas.common import ORMModel
 
 
 class UserProfileUpdate(BaseModel):

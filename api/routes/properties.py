@@ -2,13 +2,13 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from app.db.session import get_db
-from app.models.property import Property, PropertyStatus
-from app.models.user import User, UserRole
-from app.schemas.property import PropertyCreate, PropertyListResponse, PropertyResponse, PropertyUpdate
-from app.services.ai_service import generate_listing_summary
-from app.services.dependencies import get_current_user, get_optional_current_user
-from app.services.helpers import generate_id
+from db.session import get_db
+from models.property import Property, PropertyStatus
+from models.user import User, UserRole
+from schemas.property import PropertyCreate, PropertyListResponse, PropertyResponse, PropertyUpdate
+from services.ai_service import generate_listing_summary
+from services.dependencies import get_current_user, get_optional_current_user
+from services.helpers import generate_id
 
 
 router = APIRouter()

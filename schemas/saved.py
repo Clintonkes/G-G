@@ -2,8 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.schemas.common import ORMModel
-from app.schemas.property import PropertyResponse
+from schemas.common import ORMModel
+from schemas.property import PropertyResponse
 
 
 class SavedPropertyCreate(BaseModel):

@@ -4,7 +4,7 @@ from datetime import date, datetime
 from sqlalchemy import Boolean, Date, DateTime, Enum, Float, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.db.session import Base
+from db.session import Base
 
 
 class PaymentType(str, enum.Enum):

@@ -1,11 +1,11 @@
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False)
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore")
 
     app_name: str = Field(default="G&G Homes API", alias="APP_NAME")
     app_env: str = Field(default="development", alias="APP_ENV")
@@ -31,6 +31,17 @@ class Settings(BaseSettings):
     openai_model: str = Field(default="gpt-4o-mini", alias="OPENAI_MODEL")
     openai_embedding_model: str = Field(default="text-embedding-3-small", alias="OPENAI_EMBEDDING_MODEL")
     google_maps_api_key: str = Field(default="", alias="GOOGLE_MAPS_API_KEY")
+
+    @field_validator("debug", mode="before")
+    @classmethod
+    def normalize_debug(cls, value):
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized in {"true", "1", "yes", "on", "debug", "development"}:
+                return True
+            if normalized in {"false", "0", "no", "off", "release", "production"}:
+                return False
+        return value
 
     @property
     def cors_origins(self) -> list[str]:

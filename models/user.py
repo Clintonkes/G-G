@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import Boolean, DateTime, Enum, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.db.session import Base
+from db.session import Base
 
 
 class UserRole(str, enum.Enum):

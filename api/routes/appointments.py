@@ -4,17 +4,17 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.session import get_db
-from app.models.appointment import Appointment, AppointmentOutcome, AppointmentStatus
-from app.models.notification import NotificationType
-from app.models.property import Property, PropertyStatus
-from app.models.subscription import SubscriptionPlan
-from app.models.user import User, UserRole
-from app.schemas.appointment import AppointmentCreate, AppointmentResponse, AppointmentUpdate
-from app.schemas.payment import PaymentInitializeRequest
-from app.services.dependencies import get_current_user
-from app.services.helpers import generate_id
-from app.services.notification_service import create_notification
+from db.session import get_db
+from models.appointment import Appointment, AppointmentOutcome, AppointmentStatus
+from models.notification import NotificationType
+from models.property import Property, PropertyStatus
+from models.subscription import SubscriptionPlan
+from models.user import User, UserRole
+from schemas.appointment import AppointmentCreate, AppointmentResponse, AppointmentUpdate
+from schemas.payment import PaymentInitializeRequest
+from services.dependencies import get_current_user
+from services.helpers import generate_id
+from services.notification_service import create_notification
 
 
 router = APIRouter()

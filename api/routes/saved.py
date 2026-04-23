@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
-from app.db.session import get_db
-from app.models.property import Property, PropertyStatus
-from app.models.saved_property import SavedProperty
-from app.models.user import User
-from app.schemas.saved import SavedPropertyCreate, SavedPropertyResponse
-from app.services.dependencies import get_current_user
-from app.services.helpers import generate_id
+from db.session import get_db
+from models.property import Property, PropertyStatus
+from models.saved_property import SavedProperty
+from models.user import User
+from schemas.saved import SavedPropertyCreate, SavedPropertyResponse
+from services.dependencies import get_current_user
+from services.helpers import generate_id
 
 
 router = APIRouter()

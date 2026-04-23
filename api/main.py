@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import admin, appointments, auth, cron, notifications, payments, properties, saved, uploads, users
-from app.core.config import settings
-from app.db.session import Base, engine
+from api.routes import admin, appointments, auth, cron, notifications, payments, properties, saved, uploads, users
+from core.config import settings
+from db.session import Base, engine
 
 
 def create_application() -> FastAPI:

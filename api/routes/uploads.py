@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, File, UploadFile
 
-from app.models.user import User
-from app.services.dependencies import get_current_user
-from app.services.upload_service import upload_file
+from models.user import User
+from services.dependencies import get_current_user
+from services.upload_service import upload_file
 
 
 router = APIRouter()

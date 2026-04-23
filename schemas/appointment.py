@@ -2,8 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from app.models.appointment import AppointmentOutcome, AppointmentStatus
-from app.schemas.common import ORMModel
+from models.appointment import AppointmentOutcome, AppointmentStatus
+from schemas.common import ORMModel
 
 
 class AppointmentCreate(BaseModel):

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.models.notification import Notification, NotificationType
-from app.services.helpers import generate_id
+from models.notification import Notification, NotificationType
+from services.helpers import generate_id
 
 
 def create_notification(db: Session, user_id: str, title: str, message: str, type_: NotificationType) -> Notification:

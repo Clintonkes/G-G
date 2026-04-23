@@ -2,8 +2,8 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, Field
 
-from app.models.payment import PaymentStatus, PaymentType
-from app.schemas.common import ORMModel
+from models.payment import PaymentStatus, PaymentType
+from schemas.common import ORMModel
 
 
 class PaymentInitializeRequest(BaseModel):

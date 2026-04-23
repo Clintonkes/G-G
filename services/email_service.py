@@ -2,7 +2,7 @@ from collections.abc import Sequence
 
 import httpx
 
-from app.core.config import settings
+from core.config import settings
 
 
 async def send_email(to: Sequence[str], subject: str, html: str) -> None:

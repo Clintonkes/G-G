@@ -2,14 +2,14 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.core.security import create_access_token, get_password_hash, verify_password
-from app.db.session import get_db
-from app.models.subscription import Subscription, SubscriptionPlan
-from app.models.user import User
-from app.schemas.auth import ForgotPasswordRequest, LoginRequest, RegisterRequest, TokenResponse, UserResponse
-from app.services.email_service import send_email
-from app.services.dependencies import get_current_user
-from app.services.helpers import generate_id
+from core.security import create_access_token, get_password_hash, verify_password
+from db.session import get_db
+from models.subscription import Subscription, SubscriptionPlan
+from models.user import User
+from schemas.auth import ForgotPasswordRequest, LoginRequest, RegisterRequest, TokenResponse, UserResponse
+from services.email_service import send_email
+from services.dependencies import get_current_user
+from services.helpers import generate_id
 
 
 router = APIRouter()

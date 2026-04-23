@@ -5,7 +5,7 @@ import cloudinary
 import cloudinary.uploader
 from fastapi import UploadFile
 
-from app.core.config import settings
+from core.config import settings
 
 
 if settings.cloudinary_cloud_name and settings.cloudinary_api_key and settings.cloudinary_api_secret:

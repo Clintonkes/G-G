@@ -1,6 +1,6 @@
 import httpx
 
-from app.core.config import settings
+from core.config import settings
 
 
 async def generate_listing_summary(title: str, description: str, amenities: list[str]) -> str:
