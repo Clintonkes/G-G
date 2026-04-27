@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from db.session import get_db
-from models.property import Property, PropertyStatus
+from models.property import Property, PropertyStatus, PropertyType
 from models.user import User, UserRole
 from schemas.property import PropertyCreate, PropertyListResponse, PropertyResponse, PropertyUpdate
 from services.ai_service import generate_listing_summary
@@ -12,6 +12,18 @@ from services.helpers import generate_id
 
 
 router = APIRouter()
+
+
+def normalize_property_type(value: str) -> PropertyType:
+    normalized = value.strip().upper().replace(" ", "_").replace("-", "_")
+    try:
+        return PropertyType(normalized)
+    except ValueError as exc:
+        allowed = ", ".join(member.value for member in PropertyType)
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Invalid property_type '{value}'. Use one of: {allowed}.",
+        ) from exc
 
 
 @router.get("", response_model=PropertyListResponse)
@@ -46,14 +58,17 @@ async def list_properties(
         query = query.where(criterion)
         count_query = count_query.where(criterion)
     if city:
-        query = query.where(Property.city.ilike(city))
-        count_query = count_query.where(Property.city.ilike(city))
+        normalized_city = city.strip()
+        query = query.where(Property.city.ilike(normalized_city))
+        count_query = count_query.where(Property.city.ilike(normalized_city))
     if neighbourhood:
-        query = query.where(Property.neighbourhood.ilike(f"%{neighbourhood}%"))
-        count_query = count_query.where(Property.neighbourhood.ilike(f"%{neighbourhood}%"))
+        normalized_neighbourhood = neighbourhood.strip()
+        query = query.where(Property.neighbourhood.ilike(f"%{normalized_neighbourhood}%"))
+        count_query = count_query.where(Property.neighbourhood.ilike(f"%{normalized_neighbourhood}%"))
     if property_type:
-        query = query.where(Property.property_type == property_type)
-        count_query = count_query.where(Property.property_type == property_type)
+        normalized_property_type = normalize_property_type(property_type)
+        query = query.where(Property.property_type == normalized_property_type)
+        count_query = count_query.where(Property.property_type == normalized_property_type)
     if min_budget is not None:
         query = query.where(Property.annual_rent >= min_budget)
         count_query = count_query.where(Property.annual_rent >= min_budget)
