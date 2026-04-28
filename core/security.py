@@ -1,3 +1,5 @@
+
+# Handle password and sign up security within the application
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -7,7 +9,7 @@ from passlib.context import CryptContext
 from core.config import settings
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 ALGORITHM = "HS256"
 
 
