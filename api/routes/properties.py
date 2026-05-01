@@ -54,7 +54,13 @@ async def list_properties(
 
     if q:
         matcher = f"%{q.strip()}%"
-        criterion = or_(Property.title.ilike(matcher), Property.address.ilike(matcher), Property.neighbourhood.ilike(matcher))
+        criterion = or_(
+            Property.title.ilike(matcher),
+            Property.address.ilike(matcher),
+            Property.neighbourhood.ilike(matcher),
+            Property.city.ilike(matcher),
+            Property.state.ilike(matcher),
+        )
         query = query.where(criterion)
         count_query = count_query.where(criterion)
     if city:

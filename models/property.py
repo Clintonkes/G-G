@@ -49,6 +49,7 @@ class Property(Base):
     toilets: Mapped[int] = mapped_column(Integer, nullable=False)
     is_furnished: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     annual_rent: Mapped[float] = mapped_column(Float, nullable=False)
+    currency: Mapped[str] = mapped_column(String(8), nullable=False, default="NGN")
     security_deposit: Mapped[float | None] = mapped_column(Float, nullable=True)
     amenities: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
     has_water: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

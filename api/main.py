@@ -4,6 +4,7 @@ import time
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import inspect, text
 
 from api.routes import admin, appointments, auth, cron, notifications, payments, properties, saved, uploads, users
 from core.config import settings
@@ -11,6 +12,17 @@ from db.session import Base, engine
 
 
 logger = logging.getLogger("gghomes.api")
+
+
+def ensure_property_schema() -> None:
+    inspector = inspect(engine)
+    if "properties" not in inspector.get_table_names():
+        return
+
+    columns = {column["name"] for column in inspector.get_columns("properties")}
+    if "currency" not in columns:
+        with engine.begin() as connection:
+            connection.execute(text("ALTER TABLE properties ADD COLUMN currency VARCHAR(8) NOT NULL DEFAULT 'NGN'"))
 
 
 def create_application() -> FastAPI:
@@ -25,6 +37,7 @@ def create_application() -> FastAPI:
     )
 
     Base.metadata.create_all(bind=engine)
+    ensure_property_schema()
 
     @app.middleware("http")
     async def log_requests(request: Request, call_next):

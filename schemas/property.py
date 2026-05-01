@@ -21,6 +21,7 @@ class PropertyBase(BaseModel):
     toilets: int = Field(ge=0)
     is_furnished: bool = False
     annual_rent: float = Field(gt=0)
+    currency: str = Field(default="NGN", min_length=3, max_length=8)
     security_deposit: float | None = Field(default=None, ge=0)
     amenities: list[str] = Field(default_factory=list)
     has_water: bool = False
@@ -98,6 +99,7 @@ class PropertyResponse(ORMModel):
     toilets: int
     is_furnished: bool
     annual_rent: float
+    currency: str
     security_deposit: float | None
     amenities: list[str]
     has_water: bool
