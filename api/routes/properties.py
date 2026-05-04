@@ -40,6 +40,7 @@ async def list_properties(
     bedrooms: int | None = None,
     verified_only: bool = False,
     include_mine: bool = False,
+    include_owned: bool = False,
     current_user: User | None = Depends(get_optional_current_user),
 ) -> PropertyListResponse:
     query = select(Property)
@@ -48,6 +49,10 @@ async def list_properties(
     if include_mine and current_user:
         query = query.where(Property.landlord_id == current_user.id)
         count_query = count_query.where(Property.landlord_id == current_user.id)
+    elif include_owned and current_user:
+        criterion = or_(Property.status == PropertyStatus.ACTIVE, Property.landlord_id == current_user.id)
+        query = query.where(criterion)
+        count_query = count_query.where(criterion)
     else:
         query = query.where(Property.status == PropertyStatus.ACTIVE)
         count_query = count_query.where(Property.status == PropertyStatus.ACTIVE)
