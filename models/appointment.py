@@ -13,6 +13,7 @@ class AppointmentStatus(str, enum.Enum):
     COMPLETED = "COMPLETED"
     CANCELLED = "CANCELLED"
     NO_SHOW = "NO_SHOW"
+    INVALID = "INVALID"
 
 
 class AppointmentOutcome(str, enum.Enum):

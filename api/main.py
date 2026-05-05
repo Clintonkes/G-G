@@ -4,6 +4,7 @@ import time
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import inspect, text
 
 from api.routes import admin, appointments, auth, cron, notifications, payments, properties, saved, uploads, users
@@ -25,6 +26,14 @@ def ensure_property_schema() -> None:
             connection.execute(text("ALTER TABLE properties ADD COLUMN currency VARCHAR(8) NOT NULL DEFAULT 'NGN'"))
 
 
+def ensure_appointment_schema() -> None:
+    if engine.dialect.name != "postgresql":
+        return
+
+    with engine.begin() as connection:
+        connection.execute(text("ALTER TYPE appointmentstatus ADD VALUE IF NOT EXISTS 'INVALID'"))
+
+
 def create_application() -> FastAPI:
     app = FastAPI(title=settings.app_name, debug=settings.debug)
 
@@ -38,6 +47,7 @@ def create_application() -> FastAPI:
 
     Base.metadata.create_all(bind=engine)
     ensure_property_schema()
+    ensure_appointment_schema()
 
     @app.middleware("http")
     async def log_requests(request: Request, call_next):
@@ -80,6 +90,7 @@ def create_application() -> FastAPI:
     app.include_router(saved.router, prefix="/api/saved", tags=["saved"])
     app.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
     app.include_router(cron.router, prefix="/api/cron", tags=["cron"])
+    app.mount("/uploads", StaticFiles(directory="uploads", check_dir=False), name="uploads")
 
     @app.get("/api/health")
     def health_check() -> dict[str, str]:

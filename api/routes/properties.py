@@ -3,12 +3,14 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from db.session import get_db
+from models.notification import NotificationType
 from models.property import Property, PropertyStatus, PropertyType
 from models.user import User, UserRole
 from schemas.property import PropertyCreate, PropertyListResponse, PropertyResponse, PropertyUpdate
 from services.ai_service import generate_listing_summary
 from services.dependencies import get_current_user, get_optional_current_user
 from services.helpers import generate_id
+from services.notification_service import create_notification
 
 
 router = APIRouter()
@@ -124,6 +126,13 @@ async def create_property(
     if not property_record.thumbnail_url and property_record.photo_urls:
         property_record.thumbnail_url = property_record.photo_urls[0]
     db.add(property_record)
+    create_notification(
+        db,
+        current_user.id,
+        "Listing submitted",
+        f"{property_record.title} has been submitted and is awaiting verification.",
+        NotificationType.VERIFICATION,
+    )
     db.commit()
     db.refresh(property_record)
     return PropertyResponse.model_validate(property_record)

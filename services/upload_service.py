@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import cloudinary
 import cloudinary.uploader
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile, status
 
 from core.config import settings
 
@@ -19,8 +19,17 @@ if settings.cloudinary_cloud_name and settings.cloudinary_api_key and settings.c
 
 async def upload_file(file: UploadFile) -> str:
     if settings.cloudinary_cloud_name and settings.cloudinary_api_key and settings.cloudinary_api_secret:
-        result = cloudinary.uploader.upload(file.file, resource_type="auto", folder="gghomes")
-        return result["secure_url"]
+        try:
+            result = cloudinary.uploader.upload(file.file, resource_type="auto", folder="gghomes")
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Cloudinary upload failed. Confirm the Railway Cloudinary environment variables are correct.",
+            ) from exc
+        secure_url = result.get("secure_url")
+        if not secure_url:
+            raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="Cloudinary did not return a secure upload URL.")
+        return secure_url
 
     uploads_dir = Path("uploads")
     uploads_dir.mkdir(exist_ok=True)
