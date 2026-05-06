@@ -15,3 +15,4 @@ resend==2.7.0
 cloudinary==1.44.0
 python-slugify==8.0.4
 orjson==3.10.16
+aiofiles==24.1.0

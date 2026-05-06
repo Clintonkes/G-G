@@ -78,7 +78,9 @@ def create_appointment(
     is_public_inspection = property_record.status == PropertyStatus.ACTIVE
     if not is_listing_verification and not is_public_inspection:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Property not available for appointments.")
-    if payload.scheduled_date <= datetime.utcnow():
+    # Strip timezone for comparison with naive datetime.utcnow()
+    scheduled_date = payload.scheduled_date.replace(tzinfo=None) if payload.scheduled_date.tzinfo else payload.scheduled_date
+    if scheduled_date <= datetime.utcnow():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Appointment date must be in the future.")
 
     existing = db.scalar(
@@ -108,7 +110,7 @@ def create_appointment(
         tenant_id=current_user.id,
         property_id=property_record.id,
         landlord_id=property_record.landlord_id,
-        scheduled_date=payload.scheduled_date,
+        scheduled_date=scheduled_date,
         tenant_notes=payload.tenant_notes,
     )
     db.add(appointment)
@@ -153,12 +155,19 @@ def update_appointment(
         if blocked_fields:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only an admin can update appointment status or attendance.")
         if "scheduled_date" in updates:
-            if payload.scheduled_date and payload.scheduled_date <= datetime.utcnow():
+            new_date = payload.scheduled_date.replace(tzinfo=None) if payload.scheduled_date.tzinfo else payload.scheduled_date
+            if payload.scheduled_date and new_date <= datetime.utcnow():
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Appointment date must be in the future.")
             if appointment.status not in OPEN_APPOINTMENT_STATUSES:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only pending or confirmed appointments can be rescheduled.")
-            if datetime.utcnow() > appointment.scheduled_date - EDIT_WINDOW:
+            
+            # Ensure appointment.scheduled_date is also handled correctly for comparison
+            appt_date = appointment.scheduled_date.replace(tzinfo=None) if appointment.scheduled_date.tzinfo else appointment.scheduled_date
+            if datetime.utcnow() > appt_date - EDIT_WINDOW:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Appointment dates can only be edited at least 48 hours before the scheduled time.")
+            
+            # Update the field with the naive version
+            updates["scheduled_date"] = new_date
 
     previous_status = appointment.status
     previous_date = appointment.scheduled_date
