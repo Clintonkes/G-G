@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from db.session import get_db
+from models.appointment import Appointment, AppointmentStatus
 from models.notification import NotificationType
 from models.property import Property, PropertyStatus, PropertyType
 from models.user import User, UserRole
@@ -172,11 +173,44 @@ def update_property(
 
 
 @router.delete("/{property_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_property(property_id: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> None:
+def delete_property(
+    property_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> None:
     property_record = db.get(Property, property_id)
     if not property_record:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Property not found.")
     if current_user.role != UserRole.ADMIN and property_record.landlord_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You cannot delete this property.")
+    if property_record.status == PropertyStatus.RENTED:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This property has an active tenancy and cannot be removed. Contact support if needed.",
+        )
+
+    # Cancel any open appointments and notify the affected tenants before deletion.
+    open_appointments = db.scalars(
+        select(Appointment).where(
+            Appointment.property_id == property_id,
+            Appointment.status.in_([AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED]),
+        )
+    ).all()
+
+    for appt in open_appointments:
+        appt.status = AppointmentStatus.CANCELLED
+        appt.admin_notes = "Listing removed by landlord."
+        # Only notify the tenant — the landlord is the one doing the removing.
+        if appt.tenant_id != current_user.id:
+            create_notification(
+                db,
+                appt.tenant_id,
+                "Appointment cancelled",
+                f"The listing '{property_record.title}' has been removed by the landlord. "
+                f"Your scheduled inspection on {appt.scheduled_date.strftime('%b %d, %Y')} has been cancelled.",
+                NotificationType.APPOINTMENT,
+            )
+
+    # Cascade on Property model will delete all child appointment records.
     db.delete(property_record)
     db.commit()
