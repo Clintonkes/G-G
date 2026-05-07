@@ -16,3 +16,4 @@ build/
 *.sqlite3
 alembic.ini
 .env.example
+verify_appointments.py

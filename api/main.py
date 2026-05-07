@@ -1,5 +1,6 @@
 import logging
 import time
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -90,6 +91,11 @@ def create_application() -> FastAPI:
     app.include_router(saved.router, prefix="/api/saved", tags=["saved"])
     app.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
     app.include_router(cron.router, prefix="/api/cron", tags=["cron"])
+
+    # Ensure the uploads directory exists so StaticFiles.check_config() never
+    # raises on Railway's ephemeral filesystem. Cloudinary is primary storage;
+    # this directory is only used as a local fallback when credentials are absent.
+    Path("uploads").mkdir(exist_ok=True)
     app.mount("/uploads", StaticFiles(directory="uploads", check_dir=False), name="uploads")
 
     @app.get("/api/health")
