@@ -80,6 +80,7 @@ class PropertyUpdate(BaseModel):
     thumbnail_url: str | None = None
     status: PropertyStatus | None = None
     listing_type: ListingType | None = None
+    is_fully_occupied: bool | None = None
 
 
 class PropertyResponse(ORMModel):
@@ -114,6 +115,7 @@ class PropertyResponse(ORMModel):
     is_verified: bool
     verified_at: datetime | None
     listing_type: ListingType
+    is_fully_occupied: bool
     created_at: datetime
     updated_at: datetime
 

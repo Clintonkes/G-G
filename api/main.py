@@ -25,6 +25,9 @@ def ensure_property_schema() -> None:
     if "currency" not in columns:
         with engine.begin() as connection:
             connection.execute(text("ALTER TABLE properties ADD COLUMN currency VARCHAR(8) NOT NULL DEFAULT 'NGN'"))
+    if "is_fully_occupied" not in columns:
+        with engine.begin() as connection:
+            connection.execute(text("ALTER TABLE properties ADD COLUMN is_fully_occupied BOOLEAN NOT NULL DEFAULT FALSE"))
 
 
 def ensure_appointment_schema() -> None:

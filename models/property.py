@@ -63,6 +63,7 @@ class Property(Base):
     status: Mapped[PropertyStatus] = mapped_column(Enum(PropertyStatus), default=PropertyStatus.DRAFT, nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     verified_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    is_fully_occupied: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     listing_type: Mapped[ListingType] = mapped_column(Enum(ListingType), default=ListingType.STANDARD, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)

@@ -57,8 +57,14 @@ async def list_properties(
         query = query.where(criterion)
         count_query = count_query.where(criterion)
     else:
-        query = query.where(Property.status == PropertyStatus.ACTIVE)
-        count_query = count_query.where(Property.status == PropertyStatus.ACTIVE)
+        # Public search: only verified, active, and not fully occupied listings.
+        public_filter = [
+            Property.status == PropertyStatus.ACTIVE,
+            Property.is_verified.is_(True),
+            Property.is_fully_occupied.is_(False),
+        ]
+        query = query.where(*public_filter)
+        count_query = count_query.where(*public_filter)
 
     if q:
         matcher = f"%{q.strip()}%"
@@ -214,3 +220,26 @@ def delete_property(
     # Cascade on Property model will delete all child appointment records.
     db.delete(property_record)
     db.commit()
+
+
+@router.patch("/{property_id}/occupancy", response_model=PropertyResponse)
+def toggle_occupancy(
+    property_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> PropertyResponse:
+    """Toggle is_fully_occupied on a listing.
+
+    Fully occupied = removed from public search (but remains ACTIVE for the landlord).
+    Not occupied = available for search again.
+    """
+    property_record = db.get(Property, property_id)
+    if not property_record:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Property not found.")
+    if current_user.role != UserRole.ADMIN and property_record.landlord_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You cannot update this property.")
+
+    property_record.is_fully_occupied = not property_record.is_fully_occupied
+    db.commit()
+    db.refresh(property_record)
+    return PropertyResponse.model_validate(property_record)

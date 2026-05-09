@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from db.session import get_db
-from models.user import User
+from models.user import User, UserRole
 from schemas.user import UserProfileUpdate, UserResponse
 from services.dependencies import get_current_user
 
@@ -26,6 +26,18 @@ def update_profile(
         existing = db.scalar(select(User).where(User.email == payload.email.lower()))
         if existing:
             raise HTTPException(status_code=400, detail="Email already in use.")
+
+    if payload.role is not None:
+        if payload.role == UserRole.ADMIN:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Admin role cannot be self-assigned.",
+            )
+        if current_user.role == UserRole.ADMIN:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Admin role cannot be changed from this endpoint.",
+            )
 
     for field, value in payload.model_dump(exclude_unset=True).items():
         if field == "email" and value:
