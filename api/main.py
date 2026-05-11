@@ -28,6 +28,9 @@ def ensure_property_schema() -> None:
     if "is_fully_occupied" not in columns:
         with engine.begin() as connection:
             connection.execute(text("ALTER TABLE properties ADD COLUMN is_fully_occupied BOOLEAN NOT NULL DEFAULT FALSE"))
+    if "site_visited" not in columns:
+        with engine.begin() as connection:
+            connection.execute(text("ALTER TABLE properties ADD COLUMN site_visited BOOLEAN NOT NULL DEFAULT FALSE"))
 
 
 def ensure_appointment_schema() -> None:

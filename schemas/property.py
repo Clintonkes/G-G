@@ -81,6 +81,7 @@ class PropertyUpdate(BaseModel):
     status: PropertyStatus | None = None
     listing_type: ListingType | None = None
     is_fully_occupied: bool | None = None
+    site_visited: bool | None = None
 
 
 class PropertyResponse(ORMModel):
